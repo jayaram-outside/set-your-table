@@ -1,0 +1,525 @@
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Courier New", "Courier", monospace;
+    background: #f5efe6;
+    color: #333;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .add-products {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .add-products h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    font-weight: normal;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .control-btn {
+    background: white;
+    border: 4px solid #333;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .control-btn:hover {
+    background: #f5f5f5;
+  }
+
+  .control-btn select {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    min-width: 150px;
+  }
+
+  /* button inside control */
+  .control-btn button {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .control-btn button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .mode-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+
+  .mode-btn {
+    background: white;
+    border: 3px solid #333;
+    padding: 10px 25px;
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .mode-btn.active {
+    background: #333;
+    color: white;
+  }
+
+  .view-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .view-btn {
+    background: white;
+    border: 3px solid #666;
+    padding: 8px 20px;
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .view-btn.active {
+    background: #666;
+    color: white;
+  }
+
+  /* Utility class to hide elements via class toggling */
+  .hidden {
+    display: none !important;
+  }
+
+  .table-area {
+    padding: 60px 20px 0 20px;
+    margin-bottom: 40px;
+    position: relative;
+    border-radius: 10px;
+    height: 725px;
+    position: relative;
+  }
+
+  .table-background {
+    background: #a79178;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+  }
+
+
+  .table-background:before {
+    content: "";
+    background-image: url(https://www.fishseddy.com//cdn/shop/files/texture-cardboard_2x_152e7a65-9036-46f4-be46-e063c5049f79.jpg?v=1738165829);
+    background-size: 512px;
+    background-repeat: repeat;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    mix-blend-mode: overlay;
+  }
+
+  .table-items {
+    height: 275px;
+    width: 100%;
+    position: absolute;
+    top: 87px;
+    left: 0;
+    z-index: 8;
+  }
+
+  .product-image {
+    pointer-events: none;
+    filter: drop-shadow(5px -3px 0px rgba(35, 31, 32, 0.25));
+  }
+
+  .table-legs-container {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 110px;
+    z-index: 1;
+  }
+
+  .table-leg {
+    width: 22px;
+    background: linear-gradient(90deg, #5a4d42 0%, #6b5d51 50%, #5a4d42 100%);
+    position: absolute;
+    bottom: 0;
+    box-shadow:
+      2px 0 6px rgba(0, 0, 0, 0.4),
+      inset -1px 0 3px rgba(0, 0, 0, 0.3),
+      inset 1px 0 3px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Front legs - longer */
+  .table-leg:nth-child(3),
+  .table-leg:nth-child(4) {
+    height: 150px;
+  }
+
+  /* Back legs - shorter */
+  .table-leg:nth-child(5),
+  .table-leg:nth-child(6) {
+    height: 120px;
+  }
+
+  .table-leg::after,
+  .support-beam::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: -2px;
+    width: 26px;
+    height: 6px;
+    background: #4a3f35;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .support-beam {
+    position: absolute;
+    height: 180px;
+    top: -100px;
+    background: linear-gradient(180deg, #6b5d51 0%, #5a4d42 100%);
+    box-shadow:
+      0 2px 5px rgba(0, 0, 0, 0.3),
+      inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  }
+
+  .support-beam.left {
+    left: 15%;
+    width: 22px;
+  }
+
+  .support-beam.right {
+    right: 15%;
+    width: 22px;
+  }
+
+  .table-leg:nth-child(3) {
+    left: 5%;
+    bottom: 0;
+  }
+  .table-leg:nth-child(4) {
+    right: 5%;
+    bottom: 0;
+  }
+
+  /* Original fixed positions for bundle mode */
+  #pos-1 {
+    top: 50%;
+    left: 310px;
+    width: 160px;
+    height: 160px;
+  }
+
+  #pos-2 {
+    top: 50%;
+    left: 480px;
+    width: 110px;
+    height: 110px;
+  }
+
+  #pos-3 {
+    top: 50%;
+    left: 600px;
+    width: 85px;
+    height: 85px;
+  }
+
+  #pos-4 {
+    top: 50%;
+    left: 200px;
+    width: 90px;
+    height: 90px;
+  }
+
+  .table-surface {
+    background:
+      linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 0, 0, 0.03) 0.5%,
+        transparent 1%,
+        transparent 9.5%,
+        rgba(0, 0, 0, 0.03) 10%,
+        transparent 10.5%,
+        transparent 19.5%,
+        rgba(0, 0, 0, 0.03) 20%,
+        transparent 20.5%,
+        transparent 29.5%,
+        rgba(0, 0, 0, 0.03) 30%,
+        transparent 30.5%,
+        transparent 39.5%,
+        rgba(0, 0, 0, 0.03) 40%,
+        transparent 40.5%,
+        transparent 49.5%,
+        rgba(0, 0, 0, 0.03) 50%,
+        transparent 50.5%,
+        transparent 59.5%,
+        rgba(0, 0, 0, 0.03) 60%,
+        transparent 60.5%,
+        transparent 69.5%,
+        rgba(0, 0, 0, 0.03) 70%,
+        transparent 70.5%,
+        transparent 79.5%,
+        rgba(0, 0, 0, 0.03) 80%,
+        transparent 80.5%,
+        transparent 89.5%,
+        rgba(0, 0, 0, 0.03) 90%,
+        transparent 90.5%,
+        transparent 99.5%,
+        rgba(0, 0, 0, 0.03) 100%
+      ),
+      linear-gradient(180deg, #b5a593 0%, #a39581 50%, #8b7d6b 100%);
+    border-left: 8px solid #4a3f35;
+    border-right: 8px solid #4a3f35;
+    border-top: 10px solid #4a3f35;
+    border-bottom: 12px solid #4a3f35;
+    width: 100%;
+    height: 400px;
+    margin: 0 auto;
+    position: relative;
+    transform: perspective(800px) rotateX(51deg);
+    box-shadow:
+      0 30px 60px rgba(0, 0, 0, 0.4),
+      inset 0 -5px 15px rgba(0, 0, 0, 0.15),
+      inset 0 2px 10px rgba(255, 255, 255, 0.1);
+    transform-origin: center bottom;
+    z-index: 2;
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+  }
+
+  .table-surface::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -12px;
+    border: 2px solid #3a2f25;
+    pointer-events: none;
+  }
+
+  .table-surface::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 3%,
+      transparent 97%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+  }
+
+  .product-position {
+    position: absolute;
+  }
+
+  .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .placeholder {
+    width: 100%;
+    height: 100%;
+    border: 3px dashed rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+  }
+
+  .draggable {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  .recommendations {
+    margin-top: 50px;
+    text-align: center;
+  }
+
+  .recommendations h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: normal;
+    position: relative;
+    display: inline-block;
+  }
+
+  .recommendations h2::before,
+  .recommendations h2::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 100px;
+    height: 2px;
+    background: repeating-linear-gradient(
+      90deg,
+      #333 0px,
+      #333 5px,
+      transparent 5px,
+      transparent 10px
+    );
+  }
+
+  .recommendations h2::before {
+    right: calc(100% + 20px);
+  }
+  .recommendations h2::after {
+    left: calc(100% + 20px);
+  }
+
+  .slider-wrapper {
+    position: relative;
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 50px;
+  }
+
+  .slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: #333;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    transition: background 0.2s;
+  }
+
+  .slider-nav:hover {
+    background: #555;
+  }
+  .slider-nav.prev {
+    left: 0;
+  }
+  .slider-nav.next {
+    right: 0;
+  }
+
+  .slider {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px 0;
+    scrollbar-width: none;
+  }
+
+  .slider::-webkit-scrollbar {
+    display: none;
+  }
+
+  .product-card {
+    min-width: 180px;
+    background: white;
+    border: 3px dashed #999;
+    padding: 15px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .product-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    pointer-events: none;
+  }
+
+  .product-card .name {
+    font-size: 13px;
+    margin-bottom: 8px;
+    min-height: 32px;
+  }
+
+  .product-card .price {
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+
+
+  /* CSS */
+  .napkins {
+    transform: perspective(800px) rotateX(45deg);
+  }
+
+
+  [data-product-value="spot-on-mug"] img,[data-product-value="skyline-mug"] img,[data-product-value="brooklyn-mug"] img {
+      transform: scaleX(-1);
+  }
