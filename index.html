@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Your Table</title>
+  
+  <script type="module" crossorigin src="./assets/index-39be0509.js"></script>
+  <link rel="stylesheet" href="./assets/index-57b30e89.css">
+</head>
+<body>
+  <div class="container">
+    <div class="add-products">
+      <h2>Build Your Table Setting</h2>
+
+      <div class="mode-toggle">
+        <button class="mode-btn" id="individual-mode">Individual Items</button>
+        <button class="mode-btn active" id="bundle-mode">Curated Bundles</button>
+      </div>
+
+      <div class="controls" id="individual-controls" style="display: none">
+        <div class="control-btn">
+          <button id="add-slot-btn" type="button">+ Add</button>
+        </div>
+        <div class="control-btn">
+          <select id="select-category" disabled>
+            <option value="">Category</option>
+            <option value="plates">Plates</option>
+            <option value="bowls">Bowls</option>
+            <option value="mugs">Mugs</option>
+            <option value="napkins">Napkins</option>
+          </select>
+        </div>
+
+        <div class="control-btn">
+          <select id="select-product" disabled>
+            <option value="">Product</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="controls" id="bundle-controls">
+        <div class="control-btn">
+          <select id="select-bundle">
+            <option value="">Choose Bundle</option>
+            <option value="skyline-set">NYC Skyline Set</option>
+            <option value="checkerboard-set">Checkerboard Set</option>
+            <option value="spot-on-set">Spot On Set</option>
+            <option value="greenband-set">Greenband Set</option>
+            <option value="classic-diner">Classic Diner Set</option>
+            <option value="modern-minimalist">Brooklynese Set</option>
+            <option value="colorful-collection">Colorful Collection</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+      <div class="view-toggle" style="margin-top:0;">
+        <button class="view-btn active" id="front-view">Front View</button>
+        <button class="view-btn" id="top-view">Top View</button>
+      </div>
+    </div>
+
+    <div class="table-area">
+      <div class="table-background"></div>
+      <div class="table-wrapper">
+        <img id="table-front-img" src="https://i.postimg.cc/q7xngbBX/table-(1).webp" alt="front table view" />
+        <img id="table-top-img" class="hidden" src="https://i.postimg.cc/QtTThGFf/top-view-table.png" alt="top table view" />
+        <div class="table-items">
+          <!-- Fixed placeholders for bundle mode (unchanged) -->
+        </div>
+      </div>
+    </div>
+
+    <div class="recommendations">
+      <h2>People Also Purchased</h2>
+      <div class="slider-wrapper">
+        <button class="slider-nav prev" onclick="slideLeft()">‹</button>
+        <button class="slider-nav next" onclick="slideRight()">›</button>
+        <div class="slider" id="recommendations-slider"></div>
+      </div>
+    </div>
+  </div>
+
+    
+  </body>
+  </html>
