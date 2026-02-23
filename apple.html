@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Table Projection Demo</title>
+
+<style>
+  body {
+    margin: 0;
+    background: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+  }
+
+  .stage {
+    position: relative;
+    width: 900px;
+    max-width: 95vw;
+  }
+
+  .table-img {
+    width: 100%;
+    display: block;
+  }
+
+  .item-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .item {
+    position: absolute;
+    background: red;
+    border-radius: 50%;
+    opacity: 0.9;
+  }
+
+  .controls {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+  }
+
+  button {
+    padding: 8px 12px;
+    margin-right: 8px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <button onclick="setView('top')">Top View</button>
+  <button onclick="setView('front')">Front View</button>
+</div>
+
+<div class="stage">
+  <img id="tableImage" class="table-img" src="https://i.postimg.cc/QtTThGFf/top-view-table.png" />
+  <div class="item-layer" id="itemLayer"></div>
+</div>
+
+<script>
+/* -------------------------
+   CONFIGURATION
+------------------------- */
+
+const tableCalibration = {
+  top: {
+    left: 0.06,
+    right: 0.94,
+    top: 0.07,
+    bottom: 0.93
+  },
+  front: {
+    left: 0.01,
+    right: 0.99,
+    top: 0.25,
+    bottom: 0.51
+  }
+};
+
+const images = {
+  top: "https://i.postimg.cc/QtTThGFf/top-view-table.png",
+  front: "https://i.postimg.cc/q7xngbBX/table-(1).webp"
+};
+
+/* -------------------------
+   ITEM DATA (Normalized 3D)
+------------------------- */
+
+const items = [
+  {
+    id: "plate1",
+    x: 0.2,
+    z: 0.3,
+    y: 0.5,
+    width: 0.12,
+    depth: 0.18,
+    height: 0.12
+  },
+  {
+    id: "plate2",
+    x: 0.2,
+    z: 0.6,
+    y: 0.3,
+    width: 0.12,
+    depth: 0.18,
+    height: 0.12
+  },
+  {
+    id: "plate3",
+    x: 0.6,
+    z: 0.1,
+    y: 0.6,
+    width: 0.12,
+    depth: 0.18,
+    height: 0.12
+  }
+];
+
+/* -------------------------
+   STATE
+------------------------- */
+
+let currentView = "top";
+
+const img = document.getElementById("tableImage");
+const layer = document.getElementById("itemLayer");
+
+/* -------------------------
+   SURFACE CALCULATION
+------------------------- */
+
+function getSurfaceRect(view) {
+  const calib = tableCalibration[view];
+  const width = img.clientWidth;
+  const height = img.clientHeight;
+
+  return {
+    x: calib.left * width,
+    y: calib.top * height,
+    width: (calib.right - calib.left) * width,
+    height: (calib.bottom - calib.top) * height
+  };
+}
+
+/* -------------------------
+   PROJECTION FUNCTIONS
+------------------------- */
+
+function projectTop(item, surface) {
+    console.log(item);
+    console.log(surface);
+  return {
+    left: surface.x + item.x * surface.width,
+    top: surface.y + item.y * surface.height,
+    width: item.width * surface.width,
+    height: item.height * surface.height
+  };
+}
+function projectFront(item, surface) {
+  return {
+    left: surface.x + item.x * surface.width,
+    top: surface.y + item.y * surface.height,
+    width: item.width * surface.width,
+    height: item.height * surface.height *1.45
+  };
+}
+
+/* -------------------------
+   RENDER
+------------------------- */
+
+function render() {
+  layer.innerHTML = "";
+  const surface = getSurfaceRect(currentView);
+    console.log('Surface is ');
+    console.log(surface);
+  items.forEach(item => {
+    const el = document.createElement("div");
+    el.className = "item item-23";
+
+    const projection =
+      currentView === "top"
+        ? projectTop(item, surface)
+        : projectFront(item, surface);
+
+    el.style.left = projection.left + "px";
+    el.style.top = projection.top + "px";
+    el.style.width = projection.width + "px";
+    el.style.height = projection.height + "px";
+
+    layer.appendChild(el);
+  });
+}
+
+/* -------------------------
+   VIEW SWITCH
+------------------------- */
+
+function setView(view) {
+  currentView = view;
+  img.src = images[view];
+  img.onload = render;
+}
+
+/* -------------------------
+   INIT
+------------------------- */
+
+window.addEventListener("resize", render);
+img.onload = render;
+</script>
+
+</body>
+</html>

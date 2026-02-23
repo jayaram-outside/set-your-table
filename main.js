@@ -1,61 +1,3 @@
-import * as anime from 'animejs';
-
-// Import product data from external JSON file
-let products = [];
-let recommendedProducts = [];
-
-// Fetch and load the data
-fetch('data.json')
-  .then(response => response.json())
-  .then(data => {
-    products = data.products;
-    recommendedProducts = data.recommendedProducts;
-
-    // Store in window object for global access
-    window.recommendedProducts = recommendedProducts;
-    
-    // Reinitialize any code that depends on products being loaded
-    initializeProductData();
-  })
-  .catch(error => console.error('Error loading product data:', error));
-
-// Initialize products lookup and other dependent functionality
-function initializeProductData() {
-  // Rebuild the allProducts lookup since products were initially empty
-  Object.keys(allProducts).forEach(key => delete allProducts[key]);
-  products.forEach((product) => {
-    allProducts[product.value] = product;
-  });
-  
-  // Initialize recommendations now that data is loaded
-  initRecommendations();
-}
-
-// Create lookup map for easy product access by value
-const allProducts = {};
-products.forEach((product) => {
-  allProducts[product.value] = product;
-});
-
-// Helper function to get products by category
-function getProductsByCategory(category) {
-  return products.filter((p) => p.category === category);
-}
-
-// Helper function to get bundle product details
-function getBundleContents(bundleKey) {
-  const bundle = products.find((p) => p.type === "bundle" && p.value === bundleKey);
-  if (!bundle || !bundle.bundleContents) return null;
-
-  return {
-    ...bundle,
-    items: bundle.bundleContents
-      .map((item) => allProducts[item.productValue])
-      .filter(Boolean),
-  };
-}
-
-// View mode state - "front" or "top"
 let currentView = "front";
 
 // Mode switching elements
@@ -82,6 +24,137 @@ let editingSlotId = null; // NEW: track which slot is being edited
 
 // --- Bundle slots (dynamic, using same placeholder system) ---
 let bundleSlotIds = []; // [plate, bowl, mug, napkin]
+
+const tableCalibration = {
+  top: {
+    left: 0.06,
+    right: 0.94,
+    top: 0.07,
+    bottom: 0.93
+  },
+  front: {
+    left: 0.01,
+    right: 0.99,
+    top: 0.25,
+    bottom: 0.51
+  }
+};
+
+// Import product data from external JSON file
+let products = [];
+let recommendedProducts = [];
+
+// Fetch and load the data
+fetch('data.json')
+  .then(response => response.json())
+  .then(data => {
+    products = data.products;
+    recommendedProducts = data.recommendedProducts;
+
+    // Store in window object for global access
+    window.recommendedProducts = recommendedProducts;
+
+    // Reinitialize any code that depends on products being loaded
+    initializeProductData();
+  })
+  .catch(error => console.error('Error loading product data:', error));
+
+// Initialize products lookup and other dependent functionality
+function initializeProductData() {
+  // Rebuild the allProducts lookup since products were initially empty
+  Object.keys(allProducts).forEach(key => delete allProducts[key]);
+  products.forEach((product) => {
+    allProducts[product.value] = product;
+  });
+
+  // Initialize recommendations now that data is loaded
+  initRecommendations();
+}
+
+const images = {
+  top: "https://i.postimg.cc/QtTThGFf/top-view-table.png",
+  front: "https://i.postimg.cc/q7xngbBX/table-(1).webp"
+};
+
+const img = document.getElementById("tableImage");
+const layer = document.querySelector(".table-items");
+
+
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const viewValue = e.currentTarget.dataset.view;
+    console.log(viewValue);
+    setView(viewValue);
+    updateAllProductImages();
+  });
+});
+
+function setView(view) {
+  img.src = images[view];
+  // img.onload = render;
+}
+
+function render() {
+  const surface = getSurfaceRect(currentView);
+    console.log('Surface is ');
+    console.log(surface);
+  items.forEach(item => {
+    const el = document.createElement("div");
+    el.className = "item item-23";
+
+    const projection =
+      currentView === "top"
+        ? projectTop(item, surface)
+        : projectFront(item, surface);
+
+    el.style.left = projection.left + "px";
+    el.style.top = projection.top + "px";
+    el.style.width = projection.width + "px";
+    el.style.height = projection.height + "px";
+
+    layer.appendChild(el);
+  });
+}
+
+function getSurfaceRect(view) {
+  const calib = tableCalibration[view];
+  const width = img.clientWidth;
+  const height = img.clientHeight;
+
+  return {
+    x: calib.left * width,
+    y: calib.top * height,
+    width: (calib.right - calib.left) * width,
+    height: (calib.bottom - calib.top) * height
+  };
+}
+
+// Create lookup map for easy product access by value
+const allProducts = {};
+products.forEach((product) => {
+  allProducts[product.value] = product;
+});
+
+// Helper function to get products by category
+function getProductsByCategory(category) {
+  return products.filter((p) => p.category === category);
+}
+
+// Helper function to get bundle product details
+function getBundleContents(bundleKey) {
+  const bundle = products.find((p) => p.type === "bundle" && p.value === bundleKey);
+  if (!bundle || !bundle.bundleContents) return null;
+
+  return {
+    ...bundle,
+    items: bundle.bundleContents
+      .map((item) => allProducts[item.productValue])
+      .filter(Boolean),
+  };
+}
+
+
+
 
 function setIndividualUIState(state) {
   const isPending = state === "pending" || state === "editing";
@@ -400,24 +473,24 @@ bundleModeBtn.addEventListener("click", () => {
   document.getElementById("select-bundle").value = "";
 });
 
-// View toggle listeners
-frontViewBtn.addEventListener("click", () => {
-  frontViewBtn.classList.add("active");
-  topViewBtn.classList.remove("active");
-  currentView = "front";
-  // Update all placed products to show front view image
-  updateAllProductImages();
-  updateTableView();
-});
+// // View toggle listeners
+// frontViewBtn.addEventListener("click", () => {
+//   frontViewBtn.classList.add("active");
+//   topViewBtn.classList.remove("active");
+//   currentView = "front";
+//   // Update all placed products to show front view image
+//   updateAllProductImages();
+//   updateTableView();
+// });
 
-topViewBtn.addEventListener("click", () => {
-  topViewBtn.classList.add("active");
-  frontViewBtn.classList.remove("active");
-  currentView = "top";
-  // Update all placed products to show top view image
-  updateAllProductImages();
-  updateTableView();
-});
+// topViewBtn.addEventListener("click", () => {
+//   topViewBtn.classList.add("active");
+//   frontViewBtn.classList.remove("active");
+//   currentView = "top";
+//   // Update all placed products to show top view image
+//   updateAllProductImages();
+//   updateTableView();
+// });
 
 // Function to update all product images based on current view
 function updateAllProductImages() {
@@ -454,10 +527,10 @@ function updateTableView() {
 // Recommendations
 function initRecommendations() {
   const slider = document.getElementById("recommendations-slider");
-  
+
   // Load recommended products from the JSON data
   const recommendedProducts = window.recommendedProducts || [];
-  
+
   if (recommendedProducts.length === 0) {
     console.warn('Recommended products not loaded yet');
     return;
@@ -508,7 +581,6 @@ document.querySelectorAll(".draggable").forEach((item) => {
   item.style.willChange = "transform";
   item.style.touchAction = "none";
   item.style.cursor = "grab";
-  anime.set(item, { translateX: 0, translateY: 0 });
   item.addEventListener("pointerdown", startDrag);
 });
 
