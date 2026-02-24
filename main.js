@@ -1,44 +1,4 @@
-let currentView = "front";
-
-// Mode switching elements
-const individualModeBtn = document.getElementById("individual-mode");
-const bundleModeBtn = document.getElementById("bundle-mode");
-const individualControls = document.getElementById("individual-controls");
-const bundleControls = document.getElementById("bundle-controls");
-
-// View toggle elements
-const frontViewBtn = document.getElementById("front-view");
-const topViewBtn = document.getElementById("top-view");
-
-// Individual UI elements
-const MAX_SLOTS = 5;
-const tableItems = document.querySelector(".table-items");
-const addSlotBtn = document.getElementById("add-slot-btn");
-const categorySelect = document.getElementById("select-category");
-const productSelect = document.getElementById("select-product");
-
-let slots = [];
-let slotCounter = 0;
-let pendingSlotId = null;
-let editingSlotId = null; // NEW: track which slot is being edited
-
-// --- Bundle slots (dynamic, using same placeholder system) ---
-let bundleSlotIds = []; // [plate, bowl, mug, napkin]
-
-const tableCalibration = {
-  top: {
-    left: 0.06,
-    right: 0.94,
-    top: 0.07,
-    bottom: 0.93
-  },
-  front: {
-    left: 0.01,
-    right: 0.99,
-    top: 0.25,
-    bottom: 0.51
-  }
-};
+import * as anime from 'animejs';
 
 // Import product data from external JSON file
 let products = [];
@@ -71,64 +31,6 @@ function initializeProductData() {
   initRecommendations();
 }
 
-const images = {
-  top: "https://i.postimg.cc/QtTThGFf/top-view-table.png",
-  front: "https://i.postimg.cc/q7xngbBX/table-(1).webp"
-};
-
-const img = document.getElementById("tableImage");
-const layer = document.querySelector(".table-items");
-
-
-document.querySelectorAll('.view-btn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    const viewValue = e.currentTarget.dataset.view;
-    console.log(viewValue);
-    setView(viewValue);
-    updateAllProductImages();
-  });
-});
-
-function setView(view) {
-  img.src = images[view];
-  // img.onload = render;
-}
-
-function render() {
-  const surface = getSurfaceRect(currentView);
-    console.log('Surface is ');
-    console.log(surface);
-  items.forEach(item => {
-    const el = document.createElement("div");
-    el.className = "item item-23";
-
-    const projection =
-      currentView === "top"
-        ? projectTop(item, surface)
-        : projectFront(item, surface);
-
-    el.style.left = projection.left + "px";
-    el.style.top = projection.top + "px";
-    el.style.width = projection.width + "px";
-    el.style.height = projection.height + "px";
-
-    layer.appendChild(el);
-  });
-}
-
-function getSurfaceRect(view) {
-  const calib = tableCalibration[view];
-  const width = img.clientWidth;
-  const height = img.clientHeight;
-
-  return {
-    x: calib.left * width,
-    y: calib.top * height,
-    width: (calib.right - calib.left) * width,
-    height: (calib.bottom - calib.top) * height
-  };
-}
-
 // Create lookup map for easy product access by value
 const allProducts = {};
 products.forEach((product) => {
@@ -153,8 +55,32 @@ function getBundleContents(bundleKey) {
   };
 }
 
+// View mode state - "front" or "top"
+let currentView = "front";
 
+// Mode switching elements
+const individualModeBtn = document.getElementById("individual-mode");
+const bundleModeBtn = document.getElementById("bundle-mode");
+const individualControls = document.getElementById("individual-controls");
+const bundleControls = document.getElementById("bundle-controls");
 
+// View toggle elements
+const frontViewBtn = document.getElementById("front-view");
+const topViewBtn = document.getElementById("top-view");
+
+// Individual UI elements
+const MAX_SLOTS = 5;
+const tableItems = document.querySelector(".table-items");
+const addSlotBtn = document.getElementById("add-slot-btn");
+const categorySelect = document.getElementById("select-category");
+const productSelect = document.getElementById("select-product");
+let slots = [];
+let slotCounter = 0;
+let pendingSlotId = null;
+let editingSlotId = null; // NEW: track which slot is being edited
+
+// --- Bundle slots (dynamic, using same placeholder system) ---
+let bundleSlotIds = []; // [plate, bowl, mug, napkin]
 
 function setIndividualUIState(state) {
   const isPending = state === "pending" || state === "editing";
@@ -473,24 +399,24 @@ bundleModeBtn.addEventListener("click", () => {
   document.getElementById("select-bundle").value = "";
 });
 
-// // View toggle listeners
-// frontViewBtn.addEventListener("click", () => {
-//   frontViewBtn.classList.add("active");
-//   topViewBtn.classList.remove("active");
-//   currentView = "front";
-//   // Update all placed products to show front view image
-//   updateAllProductImages();
-//   updateTableView();
-// });
+// View toggle listeners
+frontViewBtn.addEventListener("click", () => {
+  frontViewBtn.classList.add("active");
+  topViewBtn.classList.remove("active");
+  currentView = "front";
+  // Update all placed products to show front view image
+  updateAllProductImages();
+  updateTableView();
+});
 
-// topViewBtn.addEventListener("click", () => {
-//   topViewBtn.classList.add("active");
-//   frontViewBtn.classList.remove("active");
-//   currentView = "top";
-//   // Update all placed products to show top view image
-//   updateAllProductImages();
-//   updateTableView();
-// });
+topViewBtn.addEventListener("click", () => {
+  topViewBtn.classList.add("active");
+  frontViewBtn.classList.remove("active");
+  currentView = "top";
+  // Update all placed products to show top view image
+  updateAllProductImages();
+  updateTableView();
+});
 
 // Function to update all product images based on current view
 function updateAllProductImages() {
@@ -509,18 +435,18 @@ function updateAllProductImages() {
   });
 }
 
+const images = {
+  top: "https://i.postimg.cc/QtTThGFf/top-view-table.png",
+  front: "https://i.postimg.cc/q7xngbBX/table-(1).webp"
+};
+
 // Update which table image is visible based on current view
 function updateTableView() {
-  const tableFront = document.getElementById("table-front-img");
-  const tableTop = document.getElementById("table-top-img");
-  if (!tableFront || !tableTop) return;
-
-  if (currentView === "top") {
-    tableFront.classList.add("hidden");
-    tableTop.classList.remove("hidden");
+  const tableImage = document.getElementById("tableImage");
+  if( currentView === 'top' ){
+    tableImage.src = images.top;
   } else {
-    tableFront.classList.remove("hidden");
-    tableTop.classList.add("hidden");
+    tableImage.src = images.front;
   }
 }
 
@@ -581,6 +507,7 @@ document.querySelectorAll(".draggable").forEach((item) => {
   item.style.willChange = "transform";
   item.style.touchAction = "none";
   item.style.cursor = "grab";
+  anime.set(item, { translateX: 0, translateY: 0 });
   item.addEventListener("pointerdown", startDrag);
 });
 
