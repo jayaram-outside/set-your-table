@@ -1,4 +1,4 @@
-import * as anime from 'animejs';
+// import * as anime from 'animejs';
 
 // Import product data from external JSON file
 let products = [];
@@ -110,7 +110,7 @@ function createPlaceholder() {
   el.innerHTML = `<div class="placeholder">Placeholder</div>`;
 
   // initial placement
-  el.style.top = "73%";
+  el.style.top = "70%";
   el.style.left = `${180 + slots.length * 120}px`;
   el.style.width = "110px";
   el.style.height = "110px";
@@ -300,11 +300,13 @@ function createBundlePlaceholders() {
 
 function applyBundle(bundleKey) {
   const bundleDetails = getBundleContents(bundleKey);
+  console.log(bundleDetails);
   if (!bundleDetails || !bundleDetails.items) return;
 
   // Make sure bundle placeholders exist
   if (bundleSlotIds.length !== 4) createBundlePlaceholders();
-
+  console.log(bundleSlotIds);
+  console.log(bundleDetails.items);
   const [plateId, bowlId, mugId, napkinId] = bundleSlotIds;
   const [plate, bowl, mug, napkin] = bundleDetails.items;
 
@@ -370,6 +372,7 @@ document
   .addEventListener("change", function () {
     const bundleKey = this.value;
     if (!bundleKey) return;
+    console.log(bundleKey);
     applyBundle(bundleKey);
   });
 
@@ -401,12 +404,24 @@ bundleModeBtn.addEventListener("click", () => {
 
 // View toggle listeners
 frontViewBtn.addEventListener("click", () => {
+
+
   frontViewBtn.classList.add("active");
   topViewBtn.classList.remove("active");
   currentView = "front";
   // Update all placed products to show front view image
   updateAllProductImages();
   updateTableView();
+  // Shift all items up by 50px
+  slots.forEach((slot) => {
+    const el = slot.el;
+    const currentX = parseFloat(el.dataset.x) || 0;
+    const currentY = parseFloat(el.dataset.y) || 0;
+    const newY = currentY - 200;
+    el.dataset.y = newY;
+    el.style.transform = `translate3d(${currentX}px, ${newY}px, 0)`;
+  });
+
 });
 
 topViewBtn.addEventListener("click", () => {
@@ -416,6 +431,16 @@ topViewBtn.addEventListener("click", () => {
   // Update all placed products to show top view image
   updateAllProductImages();
   updateTableView();
+
+  // Shift all items down by 50px
+  slots.forEach((slot) => {
+    const el = slot.el;
+    const currentX = parseFloat(el.dataset.x) || 0;
+    const currentY = parseFloat(el.dataset.y) || 0;
+    const newY = currentY + 200;
+    el.dataset.y = newY;
+    el.style.transform = `translate3d(${currentX}px, ${newY}px, 0)`;
+  });
 });
 
 // Function to update all product images based on current view
@@ -507,7 +532,7 @@ document.querySelectorAll(".draggable").forEach((item) => {
   item.style.willChange = "transform";
   item.style.touchAction = "none";
   item.style.cursor = "grab";
-  anime.set(item, { translateX: 0, translateY: 0 });
+  // anime.set(item, { translateX: 0, translateY: 0 });
   item.addEventListener("pointerdown", startDrag);
 });
 
@@ -542,6 +567,7 @@ function onMove(e) {
 }
 
 function update() {
+  console.log("Update called");
   if (!activeItem) return;
 
   if (needsUpdate) {
